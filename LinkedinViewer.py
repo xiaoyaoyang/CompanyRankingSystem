@@ -69,10 +69,16 @@ class Linkedinviewer (object):
         return None
 
 
-    def retrieve_profile(self):
+    def retrieve_profile(self, member_id=None, selectors=None):
         
         # Get profile information
-        profile = self.application.get_profile()
+        profile = None
+
+        if member_id is not None:
+            profile = self.application.get_profile(member_id=member_id, selectors=selectors)
+        else:
+            profile = self.application.get_profile(selectors=selectors)
+        
         print profile
 
         return profile
@@ -82,6 +88,7 @@ class Linkedinviewer (object):
 
         # Get company information
         companies = None
+        company_temp = None
         count = 0
         
         if company_ids is not None:
@@ -126,31 +133,38 @@ class Linkedinviewer (object):
         company_updates_dict = None
         
         if companies is not None:
-            for i in range(companies['_total']):
-                if company_list is None:
-                    company_list = []
-                company_list.append(companies['values'][i])
-            for company in company_list:
-                if company_updates_dict is None:
-                    company_updates_dict = {}
-                company_updates_dict[company['name']] = self.application.get_company_updates(company['id'], params={'count': count})
-            for company_name, company_updates in company_updates_dict.iteritems():
-                print '\n************************', company_name, '************************\n'
-                for i in range(company_updates['_count']):
-                    print '========================\n'
-                    print company_updates['values'][i]
-                    print '\n========================'
+            try:
+                for i in range(companies['_total']):
+                    if company_list is None:
+                        company_list = []
+                    company_list.append(companies['values'][i])
+                for company in company_list:
+                    if company_updates_dict is None:
+                        company_updates_dict = {}
+                    company_updates_dict[company['name']] = self.application.get_company_updates(company['id'], params={'count': count})
+                for company_name, company_updates in company_updates_dict.iteritems():
+                    print '\n************************', company_name, '************************\n'
+                    for i in range(company_updates['_count']):
+                        print '========================\n'
+                        print company_updates['values'][i]
+                        print '\n========================'
+            except:
+                print 'Unable to retrieve company updates'
 
         return company_updates_dict
 
 
 if __name__ == "__main__":
+    profile_selectors = ['id', 'location', 'first-name', 
+                         'last-name', 'industry', 'positions', 
+                         'specialties', 'summary'
+                        ]
+    company_selectors = ['id', 'name', 'company-type', 'stock-exchange', 
+                         'ticker', 'industries', 'employee-count-range',
+                         'locations', 'founded-year', 'num-followers'
+                        ]
     lviewer = Linkedinviewer()
     lviewer.authenticate()
-    lviewer.retrieve_profile()
-    selectors = ['id', 'name', 'company-type', 'stock-exchange', 
-                 'ticker', 'industries', 'employee-count-range',
-                 'locations', 'founded-year', 'num-followers'
-                ]
-    companies = lviewer.retrieve_company(universal_names=['sciencelogic', 'splunk'], selectors=selectors)
+    # lviewer.retrieve_profile(selectors=profile_selectors)
+    companies = lviewer.retrieve_company(universal_names=['1010data', 'apple'], selectors=company_selectors)
     company_updates_dict = lviewer.retrieve_company_updates(companies=companies, count=3)

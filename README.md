@@ -1,8 +1,10 @@
 # careerViz
 
-Analyzing and visualizing career data with data magic
+Analyzing and visualizing career data to predict company performance with data magic
 
-## Dependencies required:
+“There is a treasure hunt under way, driven by the insights to be extracted from data and the dormant value that can be unleashed by a shift from causation to correlation.” - Viktor Mayer-Schönberger
+
+#### Dependencies required:
 
 python-linkedin:
 	
@@ -12,8 +14,11 @@ pycrypto:
 	
 	https://pypi.python.org/pypi/pycrypto
 
+pycrunchbase:
 
-## API credential management:
+	https://github.com/ngzhian/pycrunchbase
+
+#### API credential management:
 
 careerViz provides two ways of credential management, with local .conf file or shared .p file
 
